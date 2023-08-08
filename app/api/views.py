@@ -51,5 +51,5 @@ def create_reclamation():
 
         return jsonify({'message': 'Reclamation created successfully'}), 201
     else:
-        return jsonify({'message': 'Client or Organization not found'}), 404
+        return jsonify({'message': 'Client or Organization not found'}), 404    
 
