@@ -1,4 +1,4 @@
-from app.api import views
 from flask import Blueprint
 
-api_bp = Blueprint('api', __name__)
+crud_bp = Blueprint('crud', __name__)
+

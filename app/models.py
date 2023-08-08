@@ -21,10 +21,10 @@ class User(db.Model):
 class Reclamation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, nullable=False)
-    sender_id = db.Column(db.String(50), db.ForeignKey('user.id'))
+    client_id = db.Column(db.String(50), db.ForeignKey('user.id'))
     object = db.Column(db.String(100), nullable=False)
     desc = db.Column(db.String(200))
-    delay = db.Column(db.Date, nullable=False)
+    deadline = db.Column(db.Date, nullable=False)
     status = db.Column(db.String(50), nullable=False)
     organisation_id = db.Column(db.Integer, db.ForeignKey('organisation.id'))
 

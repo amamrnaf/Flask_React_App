@@ -1,2 +1,0 @@
-SQLALCHEMY_DATABASE_URI = 'mysql://rooot:@localhost/crud'
-SQLALCHEMY_TRACK_MODIFICATIONS = False
