@@ -6,6 +6,7 @@ from app.api.views import crud_bp
 
 def create_app():
     app = Flask(__name__)
+    CORS(app)
     # Change to the appropriate config file
     app.config.from_object('config.development')
 
