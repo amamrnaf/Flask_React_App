@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import React, { useEffect,useState } from "react";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { FiSettings } from "react-icons/fi";
 import { TooltipComponent } from "@syncfusion/ej2-react-popups";
+import Protected from "./components/Protected";
 
 import { Navbar, Footer, Sidebar, ThemeSettings } from "./components";
 import {  
@@ -10,6 +11,9 @@ import {
   Reclamation,
   Dashboard,
   Details,
+  Login,
+  AdminPage,
+  NewPasswordPage
 } from "./pages";
 import "./App.css";
 
@@ -25,16 +29,21 @@ const App = () => {
     themeSettings,
     setThemeSettings,
   } = useStateContext();
+  
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
 
   useEffect(() => {
     const currentThemeColor = localStorage.getItem("colorMode");
+    
     const currentThemeMode = localStorage.getItem("themeMode");
     if (currentThemeColor && currentThemeMode) {
       setCurrentColor(currentThemeColor);
       setCurrentMode(currentThemeMode);
     }
+    
   }, []);
-
+  
+  
   return (
     <div className={currentMode === "Dark" ? "dark" : ""}>
       <BrowserRouter>
@@ -68,21 +77,23 @@ const App = () => {
             }
           >
             <div className="fixed md:static bg-main-bg dark:bg-main-dark-bg navbar w-full ">
-              <Navbar />
+            <Navbar />
             </div>
             <div>
               {themeSettings && <ThemeSettings />}
 
               <Routes>
                 {/* dashboard  */}
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-
+                <Route path="/login" element={<Login />} />
+                <Route path="/" element={<Protected><Dashboard /></Protected>} />
+                <Route path="/newpasswordpage" element={<Protected><NewPasswordPage /></Protected>} />
+                <Route path="/dashboard" element={<Protected><Dashboard /></Protected>} />
+                <Route path="/adminpage" element={<Protected><AdminPage /></Protected>} />
                 {/* pages  */}
-                <Route path="/details/:id" element={<Details />} />
-                <Route path="/createreclamation" element={<CreateReclamation />} />
-                <Route path="/reclamation" element={<Reclamation />} />
-                <Route path="/calendar" element={<Calendar />} />
+                <Route path="/details/:id" element={<Protected><Details /></Protected>} />
+                <Route path="/createreclamation" element={<Protected><CreateReclamation /></Protected>} />
+                <Route path="/reclamation" element={<Protected><Reclamation /></Protected>} />
+                <Route path="/calendar" element={<Protected><Calendar /></Protected>} />
 
               </Routes>
             </div>

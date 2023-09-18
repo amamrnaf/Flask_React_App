@@ -34,7 +34,7 @@ class Reclamation(db.Model):
 
 class Client(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    nom = db.Column(db.String(100), nullable=False)
+    nom = db.Column(db.String(200), nullable=False)
     infos = db.Column(db.String(200))
 
 
@@ -45,3 +45,15 @@ class File(db.Model):
     reclamation_id = db.Column(db.Integer, db.ForeignKey('reclamation.id')) 
 
     reclamation = db.relationship('Reclamation', backref='files') 
+    
+class Action(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer,db.ForeignKey('user.id'))
+    Action =  db.Column(db.String(1000),nullable=False)
+    reclamation_id = db.Column(db.Integer, db.ForeignKey('reclamation.id'))
+    
+    
+    reclamation = db.relationship('Reclamation', backref='actions')
+    user = db.relationship('User', backref='actions')
+    
+    

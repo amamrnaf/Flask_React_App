@@ -19,10 +19,17 @@ const Reclamation = () => {
   const [reclamtionData, setReclamationData] = useState([]);
   const selectionsettings = { persistSelection: true };
   const editing = { allowDeleting: true, allowEditing: true };
-
+   
   useEffect(() => {
     // Fetch data using Axios
-    axios.get("http://127.0.0.1:5000/crud/reclamations") // Replace with your API endpoint
+    const token = sessionStorage.getItem("token");
+    
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    axios.get("http://127.0.0.1:5000/crud/reclamations",config) 
       .then((response) => {
         setReclamationData(response.data);
       })

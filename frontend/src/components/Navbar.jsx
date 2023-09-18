@@ -1,13 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 import { AiOutlineMenu } from "react-icons/ai";
-import { FiShoppingCart } from "react-icons/fi";
-import { BsChatLeft } from "react-icons/bs";
-import { RiNotification3Line } from "react-icons/ri";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { TooltipComponent } from "@syncfusion/ej2-react-popups";
-
+import axios from "axios";
 import avatar from "../data/avatar.jpg";
-import { Cart, Chat, Notification, UserProfile } from ".";
+import {  UserProfile } from ".";
 import { useStateContext } from "../contexts/ContextProvider";
 
 const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
@@ -37,16 +34,53 @@ const Navbar = () => {
     setScreenSize,
     screenSize,
   } = useStateContext();
+  const [userData,setUser]= useState([]);
+  // Check if there's a token in sessionStorage
+  const token = sessionStorage.getItem("token");
+
+  useEffect(() => {
+   
+    const token = sessionStorage.getItem("token");
+    
+    // Check if a token exists
+    if (token) {
+      // Include the Authorization header with the token
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+  
+      // Fetch user data using Axios with the Authorization header
+      axios.get("http://127.0.0.1:5000/auth/user", config)
+        .then((response) => {
+          // Handle the user data (e.g., set it in state)
+          setUser(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+        });
+    } else {
+      console.log("no token detected,you should log in");
+    }
+  }, []);
+
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      window.location.reload();
+    },  600000); // 5 minutes in milliseconds
+  
+    return () => clearInterval(interval); // Clear the interval on component unmount
+  }, []);
 
   useEffect(() => {
     const handleResize = () => setScreenSize(window.innerWidth);
 
     window.addEventListener("resize", handleResize);
 
-    handleResize();
-
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [setScreenSize]); // Move setScreenSize to the dependency array
 
   useEffect(() => {
     if (screenSize <= 900) {
@@ -54,10 +88,12 @@ const Navbar = () => {
     } else {
       setActiveMenu(true);
     }
-  }, [screenSize]);
+  }, [screenSize, setActiveMenu]); // Include setActiveMenu in the dependency array
 
   const handleActiveMenu = () => setActiveMenu(!activeMenu);
-
+  if (!token) {
+    return null;
+  }
   return (
     <div className="flex justify-between p-2 md:ml-6 md:mr-6 relative">
       <NavButton
@@ -67,26 +103,6 @@ const Navbar = () => {
         icon={<AiOutlineMenu />}
       />
       <div className="flex">
-        <NavButton
-          title="Cart"
-          customFunc={() => handleClick("cart")}
-          color={currentColor}
-          icon={<FiShoppingCart />}
-        />
-        <NavButton
-          title="Chat"
-          dotColor="#03C9D7"
-          customFunc={() => handleClick("chat")}
-          color={currentColor}
-          icon={<BsChatLeft />}
-        />
-        <NavButton
-          title="Notification"
-          dotColor="rgb(254, 201, 15)"
-          customFunc={() => handleClick("notification")}
-          color={currentColor}
-          icon={<RiNotification3Line />}
-        />
         <TooltipComponent content="Profile" position="BottomCenter">
           <div
             className="flex items-center gap-2 cursor-pointer p-1 hover:bg-light-gray rounded-lg"
@@ -100,16 +116,12 @@ const Navbar = () => {
             <p>
               <span className="text-gray-400 text-14">Hi,</span>{" "}
               <span className="text-gray-400 font-bold ml-1 text-14">
-                Morg
+                {userData.name}
               </span>
             </p>
             <MdKeyboardArrowDown className="text-gray-400 text-14" />
           </div>
         </TooltipComponent>
-
-        {isClicked.cart && <Cart />}
-        {isClicked.chat && <Chat />}
-        {isClicked.notification && <Notification />}
         {isClicked.userProfile && <UserProfile />}
       </div>
     </div>

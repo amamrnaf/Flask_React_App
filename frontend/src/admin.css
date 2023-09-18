@@ -1,0 +1,29 @@
+/* Style for the grid container */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-gap: 20px;
+  }
+  
+  /* Style for each grid table */
+  .grid-table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 800px;
+  }
+  
+  /* Style for table headers */
+  .grid-table th {
+    background-color: #f2f2f2;
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+  }
+  
+  /* Style for table cells */
+  .grid-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+  }
+  

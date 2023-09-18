@@ -14,3 +14,7 @@ export { default as Stacked } from "./Charts/Stacked";
 export { default as Pie } from "./Charts/Pie";
 export { default as ChartsHeader } from "./ChartsHeader";
 export { default as Header } from "./Header";
+export { default as Protected } from "./Protected";
+export { default as OrganizationForm } from "./OrganizationForm";
+export { default as CreateUserForm } from "./CreateUserForm";
+export { default as CreateClientForm} from "./CreateClientForm";

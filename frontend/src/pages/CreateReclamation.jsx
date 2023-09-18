@@ -11,12 +11,13 @@ const CreateReclamation = () => {
     desc: '',
     deadline: '',
     organisation: '',
-    file: null, // Initialize file property
+    files: null, // Initialize file property
   });
-
+  const [hasPermission, setHasPermission] = useState(false);
   const [suggestedClients, setSuggestedClients] = useState([]);
-  const [orgData,setOrgData]=useState([]);
-  const [clData,setClData]=useState([]);
+  const [orgData,setOrgData]= useState([]);
+  const [clData,setClData]= useState([]);
+  
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -26,18 +27,20 @@ const CreateReclamation = () => {
     }));
   };
   const handleFileChange = (event) => {
-    const selectedFiles = event.target.files;
+    const selectedFiles = event.target.files; // Get the first selected file
     console.log('Selected Files:', selectedFiles); // Add this line for debugging
+  
     setReclamationData((prevData) => ({
       ...prevData,
-      file: selectedFiles,
+      files: selectedFiles, // Use selectedFile here
     }));
-  };  
-
+  };
+  
   const handleSubmit = (event) => {
     event.preventDefault();
+    const token = sessionStorage.getItem("token");
     
-    console.log('Selected Files:', reclamationData.file);
+    console.log('Files:', reclamationData.files);
 
     const formData = new FormData();
     formData.append('date', reclamationData.date);
@@ -46,28 +49,23 @@ const CreateReclamation = () => {
     formData.append('desc', reclamationData.desc);
     formData.append('deadline', reclamationData.deadline);
     formData.append('organisation', reclamationData.organisation);
-
-    if (reclamationData.file) {
-      if (Array.isArray(reclamationData.file)) {
-        for (let i = 0; i < reclamationData.file.length; i++) {
-          formData.append('file', reclamationData.file[i]);
-        }
-      } else {
-        formData.append('file', reclamationData.file);
-      }
+    console.log(reclamationData.files.length);
+    for (let i = 0; i < reclamationData.files.length; i++) {
+      formData.append(`file${i}`, reclamationData.files[i]);
     }
 
-    console.log('FormData:', formData);
+    console.log('reclamationData:',reclamationData);
 
     axios
-      .post("http://127.0.0.1:5000/crud/newreclamations", formData, {
+      .post("http://127.0.0.1:5000/crud/newreclamations", formData,{
         headers: {
-          'Content-Type': 'multipart/form-data', // Set the content type to multipart/form-data
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`, 
         },
       })
       .then((response) => {
-        console.log('Reclamation created successfully', response.data);
-        console.log(formData)
+        console.log('Backend response :', response.data);
+        console.log('formdata :',formData)
 
         // Reset the form data, including the file
         setReclamationData({
@@ -86,20 +84,35 @@ const CreateReclamation = () => {
   };
   
   useEffect(() => {
-
-    axios.get("http://127.0.0.1:5000/crud/organization-names")
+    const token = sessionStorage.getItem("token");
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    axios.get(`http://127.0.0.1:5000/auth/rights`,config)
+      .then((response) => {
+        console.log(response.data.allowed);
+        setHasPermission(response.data.allowed);
+        
+      })
+      .catch((error) => {
+        console.error("Error fetching permission:", error);
+      });
+    axios.get("http://127.0.0.1:5000/crud/organization-names",config)
       .then(response => {
         setOrgData(response.data);
       })
       .catch(error => {
         console.error("Error fetching organization names", error);
       })
-      axios.get("http://127.0.0.1:5000/crud/client-names")
+
+    axios.get("http://127.0.0.1:5000/crud/client-names",config)
       .then(response => {
         setClData(response.data);
       })
       .catch(error => {
-        console.error("Error fetching organization names", error);
+        console.error("Error fetching client names", error);
       })
   },[]);
 
@@ -214,25 +227,27 @@ const handleClientSearch = (value) => {
       </select>
       </div>
       <div>
-    <label>Upload File (PDF or Image):</label>
+    <label>Upload Files (PDF or Image):</label>
     <input
       type="file"
-      name="file"
+      name="file" // Ensure this is "file"
       accept=".pdf, .jpg, .jpeg, .png"
       onChange={handleFileChange}
       multiple
     />
-    {reclamationData.file && (
-      <p>Selected File: {reclamationData.file.name}</p>
-    )}
     </div>
       
-
-      <div className="col-span-2">
-        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
-          Create Reclamation
-        </button>
-      </div>
+    {hasPermission ? (
+  <div className="col-span-2">
+    <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
+      Create Reclamation
+    </button>
+  </div>
+) : (
+  <div className="col-span-2">
+    <p>You do not have permission to create a new reclamation.</p>
+  </div>
+)}
     </form>
   </div>
   );
