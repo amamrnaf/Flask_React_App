@@ -115,10 +115,11 @@ def create_reclamation():
                 organisation_id=organisation.id
             )
 
+            db.session.add(reclamation)
+            db.session.commit()
             # Check for file uploads
             if any(f.startswith('file') for f in request.files):
-                db.session.add(reclamation)
-                db.session.commit()
+                
 
                 file_list = []
                 for i in range(1, 11):
@@ -141,9 +142,8 @@ def create_reclamation():
                     db.session.add(file_record)
                     db.session.commit()
 
-                return jsonify({'message': 'Reclamation created successfully'}), 201
-            else:
-                return jsonify({'message': 'No files detected'}), 400
+            return jsonify({'message': 'Reclamation created successfully'}), 201
+            
         else:
             return jsonify({'message': 'Client or Organization not found'}), 404
     except Exception as e:
@@ -252,16 +252,92 @@ def get_pending_reclamations_count():
         # Get the user's organization ID from the JWT claims
         jwt_claims = get_jwt()
         org_id = jwt_claims["organisation_id"]
-        
-        # Query the database to count pending reclamations for the user's organization
-        pending_reclamations_count = Reclamation.query.filter_by(
+        Org = Organisation.query.filter_by(id=org_id).first()
+         
+        if Org.name == "main_office":
+            pending_reclamations_count = Reclamation.query.filter_by(status='Pending').count()
+        else:
+            pending_reclamations_count = Reclamation.query.filter_by(
             organisation_id=org_id, status='Pending').count()
         
         return jsonify({'count': pending_reclamations_count}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@crud_bp.route('/finished-reclamations-count', methods=['GET'])
+@jwt_required()
+def get_finished_reclamations_count():
+    try:
+        # Get the user's organization ID from the JWT claims
+        jwt_claims = get_jwt()
+        org_id = jwt_claims["organisation_id"]
+        Org = Organisation.query.filter_by(id=org_id).first()
+        if Org.name == "main_office":
+            finished_reclamations_count = Reclamation.query.filter_by(status='Finished').count()
+        else:
+            
+            finished_reclamations_count = Reclamation.query.filter_by(
+            organisation_id=org_id, status='Finished').count()
+        
+        return jsonify({'count': finished_reclamations_count}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@crud_bp.route('/reclamations-count', methods=['GET'])
+@jwt_required()
+def get_reclamations_count():
+    try:
+        # Get the user's organization ID from the JWT claims
+        jwt_claims = get_jwt()
+        org_id = jwt_claims["organisation_id"]
+        Org = Organisation.query.filter_by(id=org_id).first()
+        if Org.name == "main_office":
+            finished_reclamations_count = Reclamation.query.filter_by().count()
+        else:
+            
+            finished_reclamations_count = Reclamation.query.filter_by(
+            organisation_id=org_id).count()
+        
+        return jsonify({'count': finished_reclamations_count}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
+@crud_bp.route('/reclamations_by_organization_data', methods=['GET'])
+@jwt_required()
+def generate_reclamations_by_organization_data():
+    try:
+        # Query the database to count reclamations by organization
+        organizations = Organisation.query.all()
+        total_reclamations = Reclamation.query.count()
+        
+        data = []
+        
+        for org in organizations:
+            reclamation_count = Reclamation.query.filter_by(
+                organisation_id=org.id).count()
+            
+            # Calculate the percentage
+            if total_reclamations > 0:
+                percentage = (reclamation_count / total_reclamations) * 100
+            else:
+                percentage = 0
+            
+            # Create a data entry for the organization
+            data_entry = {
+                'x': org.name,  # Assuming 'name' is the organization name attribute
+                'y': reclamation_count,
+                'text': f'{percentage:.2f}%'  # Format percentage with 2 decimal places
+            }
+            if data_entry['y']==0:
+                print("skipping")
+            else:
+                data.append(data_entry)
+        
+        return jsonify(data), 200
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 500
 
 
 

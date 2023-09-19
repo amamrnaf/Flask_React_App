@@ -49,10 +49,13 @@ const CreateReclamation = () => {
     formData.append('desc', reclamationData.desc);
     formData.append('deadline', reclamationData.deadline);
     formData.append('organisation', reclamationData.organisation);
-    console.log(reclamationData.files.length);
-    for (let i = 0; i < reclamationData.files.length; i++) {
-      formData.append(`file${i}`, reclamationData.files[i]);
+    
+    if(reclamationData.files ){
+      for (let i = 0; i < reclamationData.files.length; i++) {
+        formData.append(`file${i}`, reclamationData.files[i]);
+      }
     }
+    
 
     console.log('reclamationData:',reclamationData);
 

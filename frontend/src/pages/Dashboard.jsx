@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { GoPrimitiveDot } from "react-icons/go";
 import { Stacked, Pie,SparkLine } from "../components";
 import { AiFillFileExclamation,AiOutlineFileProtect,AiFillFileText } from 'react-icons/ai';
@@ -13,6 +13,48 @@ import { useStateContext } from "../contexts/ContextProvider";
 
 const Dashboard = () => {
   const { currentColor, currentMode } = useStateContext();
+  const [pendingCount, setPendingCount] = useState(0);
+  const [finsihedCount, setFinishedCount] = useState(0);
+  const [totatlCount, setCount] = useState(0);
+  const [data,setData] = useState([]);
+  const axiosConfig = {
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+    },
+  };
+    useEffect(() => {
+        // Make a GET request to the backend endpoint
+        axios.get('http://127.0.0.1:5000/crud/pending-reclamations-count',axiosConfig)
+            .then((response) => {
+              setPendingCount(response.data.count);
+            })
+            .catch((error) => {
+                console.error('Error fetching count:', error);
+            });
+        axios.get('http://127.0.0.1:5000/crud/finished-reclamations-count',axiosConfig)
+            .then((response) => {
+              setFinishedCount(response.data.count);
+            })
+            .catch((error) => {
+                console.error('Error fetching count:', error);
+            });
+        axios.get('http://127.0.0.1:5000/crud/reclamations-count',axiosConfig)
+            .then((response) => {
+              setCount(response.data.count);
+            })
+            .catch((error) => {
+                console.error('Error fetching count:', error);
+            });
+        axios.get('http://127.0.0.1:5000/crud/reclamations_by_organization_data',axiosConfig)
+            .then((response) => {
+              setData(response.data);
+              console.log(response.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching count:', error);
+            });
+    }, []);
+
 
   return (
     <div className="mt-24">
@@ -20,7 +62,7 @@ const Dashboard = () => {
         <div className="flex m-3 flex-wrap justify-center gap-1 items-center">
           
             <div
-              key='Customers'
+              key='Pending'
               className="bg-white h-44 dark:text-gray-200 dark:bg-secondary-dark-bg md:w-56  p-4 pt-9 rounded-2xl "
             >
               <button
@@ -31,12 +73,12 @@ const Dashboard = () => {
                 <AiFillFileExclamation />
               </button>
               <p className="mt-3">
-                <span className="text-lg font-semibold">39,354</span>
+                <span className="text-lg font-semibold">{pendingCount}</span>
               </p>
               <p className="text-sm text-gray-400  mt-1">Unfinished reclamation</p>
             </div>
             <div
-              key='Customers'
+              key='Finished'
               className="bg-white h-44 dark:text-gray-200 dark:bg-secondary-dark-bg md:w-56  p-4 pt-9 rounded-2xl "
             >
               <button
@@ -47,12 +89,12 @@ const Dashboard = () => {
                 <AiOutlineFileProtect />
               </button>
               <p className="mt-3">
-                <span className="text-lg font-semibold">39,354</span>
+                <span className="text-lg font-semibold">{finsihedCount}</span>
               </p>
               <p className="text-sm text-gray-400  mt-1">Finished reclamation</p>
             </div>
             <div
-              key='Customers'
+              key='total'
               className="bg-white h-44 dark:text-gray-200 dark:bg-secondary-dark-bg md:w-56  p-4 pt-9 rounded-2xl "
             >
               <button
@@ -63,7 +105,7 @@ const Dashboard = () => {
                 <AiFillFileText />
               </button>
               <p className="mt-3">
-                <span className="text-lg font-semibold">39,354</span>
+                <span className="text-lg font-semibold">{totatlCount}</span>
               </p>
               <p className="text-sm text-gray-400  mt-1">All reclamations</p>
             </div>
@@ -93,55 +135,13 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="mt-10 flex gap-10 flex-wrap justify-center">
-            <div className=" border-r-1 border-color m-4 pr-10">
-              <div>
-                <p>
-                  <span className="text-3xl font-semibold">$93,438</span>
-                  <span className="p-1.5 hover:drop-shadow-xl cursor-pointer rounded-full text-white bg-green-400 ml-3 text-xs">
-                    23%
-                  </span>
-                </p>
-                <p className="text-gray-500 mt-1">Budget</p>
-              </div>
-              <div className="mt-8">
-                <p className="text-3xl font-semibold">$48,487</p>
-
-                <p className="text-gray-500 mt-1">Expense</p>
-              </div>
-            </div>
+            
             <div>
               <Stacked currentMode={currentMode} width="320px" height="360px" />
             </div>
           </div>
         </div>
         <div>
-          <div
-            className=" rounded-2xl md:w-400 p-4 m-3"
-            style={{ backgroundColor: currentColor }}
-          >
-            <div className="flex justify-between items-center ">
-              <p className="font-semibold text-white text-2xl">Earnings</p>
-
-              <div>
-                <p className="text-2xl text-white font-semibold mt-8">
-                  $63,448.78
-                </p>
-                <p className="text-gray-200">Monthly revenue</p>
-              </div>
-            </div>
-
-            <div className="mt-4">
-              <SparkLine
-                currentColor={currentColor}
-                id="column-sparkLine"
-                height="100px"
-                type="Column"
-                data={SparklineAreaData}
-                width="320"
-                color="rgb(242, 252, 253)"
-              />
-            </div>
-          </div>
 
           <div className="bg-white dark:text-gray-200 dark:bg-secondary-dark-bg rounded-2xl md:w-400 p-8 m-3 flex justify-center items-center gap-10">
             <div>
@@ -152,9 +152,9 @@ const Dashboard = () => {
             <div className="w-40">
               <Pie
                 id="pie-chart"
-                data={ecomPieChartData}
+                data={data}
                 legendVisiblity={false}
-                height="160px"
+                height="320px"
               />
             </div>
           </div>

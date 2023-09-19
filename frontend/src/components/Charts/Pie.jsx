@@ -33,7 +33,7 @@ const Doughnut = ({ id, data, legendVisiblity, height }) => {
       />
       <AccumulationSeriesCollectionDirective>
         <AccumulationSeriesDirective
-          name="Sale"
+          name="reclamations"
           dataSource={data}
           xName="x"
           yName="y"
