@@ -14,6 +14,7 @@ import { useStateContext } from "../../contexts/ContextProvider";
 
 const Doughnut = ({ id, data, legendVisiblity, height }) => {
   const { currentMode } = useStateContext();
+  const { currentColor } = useStateContext();
 
   return (
     <AccumulationChartComponent
@@ -40,7 +41,7 @@ const Doughnut = ({ id, data, legendVisiblity, height }) => {
           innerRadius="40%"
           startAngle={0}
           endAngle={360}
-          radius="70%"
+          radius="100%"
           explode
           explodeOffset="10%"
           explodeIndex={2}
@@ -50,7 +51,7 @@ const Doughnut = ({ id, data, legendVisiblity, height }) => {
             position: "Inside",
             font: {
               fontWeight: "600",
-              color: "#fff",
+              color: {currentColor},
             },
           }}
         />

@@ -18,6 +18,11 @@ class User(db.Model):
     password = db.Column(db.String(50), nullable=False)
 
 
+class Client(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nom = db.Column(db.String(200), nullable=False)
+    infos = db.Column(db.String(200))
+    
 class Reclamation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, nullable=False)
@@ -32,10 +37,6 @@ class Reclamation(db.Model):
 
 
 
-class Client(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    nom = db.Column(db.String(200), nullable=False)
-    infos = db.Column(db.String(200))
 
 
 class File(db.Model):
@@ -56,4 +57,4 @@ class Action(db.Model):
     reclamation = db.relationship('Reclamation', backref='actions')
     user = db.relationship('User', backref='actions')
     
-    
+

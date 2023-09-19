@@ -105,6 +105,7 @@ const CreateReclamation = () => {
     axios.get("http://127.0.0.1:5000/crud/organization-names",config)
       .then(response => {
         setOrgData(response.data);
+        console.log(response.data);
       })
       .catch(error => {
         console.error("Error fetching organization names", error);
@@ -113,6 +114,7 @@ const CreateReclamation = () => {
     axios.get("http://127.0.0.1:5000/crud/client-names",config)
       .then(response => {
         setClData(response.data);
+        console.log(response.data);
       })
       .catch(error => {
         console.error("Error fetching client names", error);

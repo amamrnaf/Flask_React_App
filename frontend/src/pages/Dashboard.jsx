@@ -1,18 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { GoPrimitiveDot } from "react-icons/go";
-import { Stacked, Pie,SparkLine } from "../components";
+import { Stacked, Pie } from "../components";
 import { AiFillFileExclamation,AiOutlineFileProtect,AiFillFileText } from 'react-icons/ai';
 import axios from "axios";
 
-import {
-  SparklineAreaData,
-  ecomPieChartData,
-} from "../data/dummy";
 import { useStateContext } from "../contexts/ContextProvider";
 
 
 const Dashboard = () => {
-  const { currentColor, currentMode } = useStateContext();
+  const { currentMode } = useStateContext();
   const [pendingCount, setPendingCount] = useState(0);
   const [finsihedCount, setFinishedCount] = useState(0);
   const [totatlCount, setCount] = useState(0);
@@ -145,8 +141,8 @@ const Dashboard = () => {
 
           <div className="bg-white dark:text-gray-200 dark:bg-secondary-dark-bg rounded-2xl md:w-400 p-8 m-3 flex justify-center items-center gap-10">
             <div>
-              <p className="text-2xl font-semibold ">$43,246</p>
-              <p className="text-gray-400">Yearly sales</p>
+              <p className="text-2xl font-semibold ">total reclamations:</p>
+              <p className="text-gray-400">pie chart : reclamation per region</p>
             </div>
 
             <div className="w-40">
@@ -154,7 +150,7 @@ const Dashboard = () => {
                 id="pie-chart"
                 data={data}
                 legendVisiblity={false}
-                height="320px"
+                height="500px"
               />
             </div>
           </div>

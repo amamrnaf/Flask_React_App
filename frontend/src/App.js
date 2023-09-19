@@ -1,12 +1,12 @@
-import React, { useEffect,useState } from "react";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import React, { useEffect } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { FiSettings } from "react-icons/fi";
 import { TooltipComponent } from "@syncfusion/ej2-react-popups";
 import Protected from "./components/Protected";
+import AdminProtection from "./components/adminProtection";
 
 import { Navbar, Footer, Sidebar, ThemeSettings } from "./components";
 import {  
-  Calendar,
   CreateReclamation,
   Reclamation,
   Dashboard,
@@ -30,7 +30,6 @@ const App = () => {
     setThemeSettings,
   } = useStateContext();
   
-  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
 
   useEffect(() => {
     const currentThemeColor = localStorage.getItem("colorMode");
@@ -88,12 +87,11 @@ const App = () => {
                 <Route path="/" element={<Protected><Dashboard /></Protected>} />
                 <Route path="/newpasswordpage" element={<Protected><NewPasswordPage /></Protected>} />
                 <Route path="/dashboard" element={<Protected><Dashboard /></Protected>} />
-                <Route path="/adminpage" element={<Protected><AdminPage /></Protected>} />
+                <Route path="/adminpage" element={<AdminProtection><AdminPage /></AdminProtection>} />
                 {/* pages  */}
                 <Route path="/details/:id" element={<Protected><Details /></Protected>} />
                 <Route path="/createreclamation" element={<Protected><CreateReclamation /></Protected>} />
                 <Route path="/reclamation" element={<Protected><Reclamation /></Protected>} />
-                <Route path="/calendar" element={<Protected><Calendar /></Protected>} />
 
               </Routes>
             </div>
