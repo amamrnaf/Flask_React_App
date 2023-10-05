@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { FiSettings } from "react-icons/fi";
 import { TooltipComponent } from "@syncfusion/ej2-react-popups";
 import Protected from "./components/Protected";
-import AdminProtection from "./components/adminProtection";
 
 import { Navbar, Footer, Sidebar, ThemeSettings } from "./components";
 import {  
@@ -87,7 +86,7 @@ const App = () => {
                 <Route path="/" element={<Protected><Dashboard /></Protected>} />
                 <Route path="/newpasswordpage" element={<Protected><NewPasswordPage /></Protected>} />
                 <Route path="/dashboard" element={<Protected><Dashboard /></Protected>} />
-                <Route path="/adminpage" element={<AdminProtection><AdminPage /></AdminProtection>} />
+                <Route path="/adminpage" element={<Protected><AdminPage /></Protected>} />
                 {/* pages  */}
                 <Route path="/details/:id" element={<Protected><Details /></Protected>} />
                 <Route path="/createreclamation" element={<Protected><CreateReclamation /></Protected>} />

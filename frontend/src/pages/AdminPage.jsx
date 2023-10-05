@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../admin.css"
+import { useNavigate } from 'react-router-dom';
 import { Header,OrganizationForm,CreateClientForm,CreateUserForm } from "../components";
 
 
 
 
 const AdminPage = () => {
+  const navigate = useNavigate();
     const [selectedTable, setSelectedTable] = useState("organisations");
     const [data, setData] = useState([]);
     const [showCreateClientForm, setShowCreateClientForm] = useState(false);
@@ -22,6 +24,7 @@ const AdminPage = () => {
     
 
     useEffect(() => {
+
         const fetchData = async () => {
           try {
             const response = await axios.get(`http://127.0.0.1:5000/admin/${selectedTable}`, axiosConfig);
@@ -30,6 +33,17 @@ const AdminPage = () => {
             console.error("Error fetching data:", error);
           }
         };
+        
+      axios.get(`http://127.0.0.1:5000/auth/rights`,axiosConfig)
+      .then((response) => {
+        console.log("response :",!response.data.allowed);
+        if(!response.data.allowed){
+          navigate("/Dashboard");
+        }  
+      })
+      .catch((error) => {
+        console.error("Error fetching permission:", error);
+      });
     
         fetchData();
       }, [selectedTable]);

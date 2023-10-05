@@ -15,4 +15,3 @@ export { default as Protected } from "./Protected";
 export { default as OrganizationForm } from "./OrganizationForm";
 export { default as CreateUserForm } from "./CreateUserForm";
 export { default as CreateClientForm} from "./CreateClientForm";
-export { default as AdminProtection } from "./adminProtection";
