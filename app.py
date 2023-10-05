@@ -8,6 +8,7 @@ app.app_context().push()
 
 db.create_all()
 
+
 def insert_organizations(organization_names):
     for name in organization_names:
         organization = Organisation.query.filter_by(name=name).first()
@@ -18,6 +19,7 @@ def insert_organizations(organization_names):
 
 # Function to insert clients while checking for duplicates
 
+
 def insert_clients(client_names):
     for name in client_names:
         client = Client.query.filter_by(nom=name).first()
@@ -26,8 +28,9 @@ def insert_clients(client_names):
             db.session.add(client)
     db.session.commit()
 
-excel_file1 = "entite.csv"
-excel_file2 = "clients.csv"
+
+excel_file1 = "entite.xlsx"
+excel_file2 = "clients.xlsx"
 data1 = pd.read_excel(excel_file1)
 data2 = pd.read_excel(excel_file2)
 organization_names = data1.Organization
@@ -43,13 +46,13 @@ if not main_office:
 
 
 def insert_first_user():
-    email = 'm.azbakh@anep.ma' # You can customize the mail 
-    
+    email = 'm.azbakh@anep.ma'  # You can customize the mail
+
     existing_user = User.query.filter_by(email=email).first()
     if not existing_user:
         main_office = Organisation.query.filter_by(name='main_office').first()
         new_user = User(
-            name='Ammar',      # You can cuztomize the name 
+            name='Ammar',      # You can cuztomize the name
             family_name='Doe',  # You can customize the family name
             organisation_id=main_office.id,  # Set the organization to 'main_office'
             email=email,
